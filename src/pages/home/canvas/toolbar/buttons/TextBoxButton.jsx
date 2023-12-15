@@ -34,27 +34,22 @@ class TextBox extends Rectangle {
 };
 
 
+
 function TextBoxButton() {
     const {paintRect, canvasPosition } = useContext(CanvasContext);
-    const [textBox, setTextBox] = useState([TextBox]);
+    const textBox = useRef(Rectangle);
+    const rectObj = textBox.current;
 
     function handleButtonClick() {
-        setTextBox(prevTextBox => {
-            const newTextBox = new TextBox;
-            newTextBox.x = 420;
-            newTextBox.y = 220;
-            newTextBox.width = 160;
-            newTextBox.height = 60;
-            newTextBox.color = 'white';
-            newTextBox.id = 1
-            newTextBox.text = '';
-            return [...prevTextBox, newTextBox]
-        });
-    };
+        rectObj.x = 420;
+        rectObj.y = 220;
+        rectObj.width = 160;
+        rectObj.height = 60;
+        rectObj.color = 'white';
+        rectObj.id = 1
 
-    useEffect(() => {
-        paintRect(textBox);
-    },[textBox]);
+        paintRect(rectObj);
+    }
 
     function handleKeyDown(event) {
         switch(event.key) {
@@ -87,8 +82,8 @@ function TextBoxButton() {
         else {
             mousePosition = { x: (e.clientX - canvasPosition.x), y: (e.clientY - canvasPosition.y) };
         };
-        if(mousePosition.x >= textBox .x && mousePosition.x <= (textBox.x + textBox.width) && mousePosition.y >= textBox.y && mousePosition.y <= (textBox.y + textBox.height)) {
-            textBox
+        if(mousePosition.x >= rectObj.x && mousePosition.x <= (rectObj.x + rectObj.width) && mousePosition.y >= rectObj.y && mousePosition.y <= (rectObj.y + rectObj.height)) {
+            console.log(mousePosition);
         };
 
     }
