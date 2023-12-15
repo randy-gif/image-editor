@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css';
-import Canvas from './canvas';
+import Home from './pages/home/Home';
 
 function App() {
 
@@ -18,7 +18,7 @@ function App() {
           </ul>
         </nav>
       </header>
-      <Canvas/>
+      <Home/>
     </div>
   )
 }

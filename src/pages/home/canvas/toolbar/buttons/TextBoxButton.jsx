@@ -1,7 +1,6 @@
 import { useEffect, useContext, useRef, useState} from 'react';
 import CanvasContext from '../../CanvasContext';
-import Rectangle from '../../Rectangle';
-import { set } from 'mongoose';
+import Rectangle from '../../../Rectangle';
 
 class TextBox extends Rectangle {
     _text;

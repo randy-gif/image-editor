@@ -1,4 +1,4 @@
-import memeImg from '../../assets/meme-data'
+import memeImg from '../data/meme-data';
 import { useContext } from 'react';
 import CanvasContext from '../../CanvasContext';
 

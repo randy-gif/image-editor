@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
-import CanvasToolbar from "./canvas-tools/CanvasToolbar";
-import MyContext from './MyContext';
+import CanvasToolbar from "./toolbar/CanvasToolbar"
+import CanvasContext from './CanvasContext';
 
 const Canvas = () => {
     const canvasWidth = 1000;
@@ -182,14 +182,14 @@ const Canvas = () => {
         canvasPosition: canvasPosition,
     };
     return (
-        <MyContext.Provider value={contextValue}>
+        <CanvasContext.Provider value={contextValue}>
             <section>
                 <CanvasToolbar/>
                 <div className='canvas-containor'>
                     <canvas className='my-canvas' ref={canvasRef} height={canvasHeight} width={canvasWidth} />
                 </div>
             </section>
-        </MyContext.Provider>
+        </CanvasContext.Provider>
     );
 };
 
