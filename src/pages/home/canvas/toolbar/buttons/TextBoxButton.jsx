@@ -5,47 +5,43 @@ import CanvasContext from '../../CanvasContext';
 
 function TextBoxButton() {
     const {addDrawing, canvasPosition } = useContext(CanvasContext);
-
+    const [textBoxes, setTextBoxes] = useState();
 
     function handleButtonClick() {
-        const rectObj = {x:0, y:0, width: 0, height: 0, color: 'white', id: 1};
-        rectObj.x = 420;
-        rectObj.y = 220;
-        rectObj.width = 160;
-        rectObj.height = 60;
-        rectObj.color = 'white';
-        rectObj.id = 1
-
-        rectObj.id = 1;
-        rectObj.x = 440;
-        rectObj.y = 220;
-        rectObj.width = 160;
-        rectObj.height = 60;
-        rectObj.color = 'white';
-
-        console.log(rectObj);
-
-        addDrawing('rectangle', rectObj);
+        setTextBoxes((prevTextBoxes)=> {
+            const newTextBox = {
+                id: textBoxes.length + 1,
+                x: 940,
+                y: 470,
+                width: 120,
+                height: 60,
+                color: 'white',
+            }
+            return [...prevTextBoxes, newTextBox]
+        }) 
     }
 
     function handleKeyDown(event) {
         switch(event.key) {
             case 'ArrowUp':
-                rectObj.y -= 20;
-                console.log(rectObj);
-                addDrawing('rectangle', rectObj);
+                setTextBoxes((prevTextBoxes => {
+                    return {...prevTextBoxes, y: prevTextBoxes.y - 20}
+                }));
                 break;
             case 'ArrowDown':
-                rectObj.y = (rectObj.y + 20);
-                addDrawing('rectangle', rectObj);
+                setTextBoxes((prevTextBoxes => {
+                    return {...prevTextBoxes, y: prevTextBoxes.y + 20}
+                }));
                 break;
             case 'ArrowLeft':
-                rectObj.x = (rectObj.x - 20);
-                addDrawing('rectangle', rectObj);
+                setTextBoxes((prevTextBoxes => {
+                    return {...prevTextBoxes, x: prevTextBoxes.x - 20}
+                }));                
                 break;
             case 'ArrowRight':
-                rectObj.x = (rectObj.x + 20);
-                addDrawing('rectangle', rectObj);
+                setTextBoxes((prevTextBoxes => {
+                    return {...prevTextBoxes, x: prevTextBoxes.x + 20}
+                }));
             break;
         };
     };
@@ -60,10 +56,15 @@ function TextBoxButton() {
         else {
             mousePosition = { x: (e.clientX - canvasPosition.x), y: (e.clientY - canvasPosition.y) };
         };
-        if(mousePosition.x >= rectObj.x && mousePosition.x <= (rectObj.x + rectObj.width) && mousePosition.y >= rectObj.y && mousePosition.y <= (rectObj.y + rectObj.height)) {
+        if(mousePosition.x >= textBoxes.x && mousePosition.x <= (textBoxes.x + textBoxes.width) && mousePosition.y >= textBoxes.y && mousePosition.y <= (textBoxes.y + textBoxes.height)) {
         };
 
-    }
+    };
+
+    useEffect(()=> {
+        addDrawing('rectangle', textBoxes);
+    },[textBoxes]);
+    
     useEffect(()=>{
        window.addEventListener('keydown', handleKeyDown);
        return () => window.removeEventListener('keydown', handleKeyDown)
