@@ -6,7 +6,8 @@ interface Rectangle {
   x: number;
   y: number;
   width: number;
-  length: number;
+  height: number;
+  color: string
 }
 
 interface Circle {

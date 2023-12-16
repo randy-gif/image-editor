@@ -1,46 +1,14 @@
 import { useEffect, useContext, useRef, useState} from 'react';
 import CanvasContext from '../../CanvasContext';
-import Rectangle from '../../../Rectangle';
-
-class TextBox extends Rectangle {
-    _text;
-    _mouseDown;
-    _mouseUp;
-
-    constructor(x, y, width, height, color, id, text) {
-        super(x, y, width, height, color, id);
-        this._text = text;
-        this._mouseDown = false;
-        this._mouseUp = false;
-    };
-    get text() {
-        return this._text;
-    };
-    get mouseUp() {
-        return this._mouseUp;
-    };
-    get mouseDown() {
-        return this._mouseDown;
-    };
-    set text(str) {
-        this._text = str;
-    };
-    set mouseUp(boolean) {
-        this._mouseUp = boolean;
-    }
-    set mouseDown(boolean) {
-        this._mouseDown = boolean;
-    }
-};
 
 
 
 function TextBoxButton() {
-    const {paintRect, canvasPosition } = useContext(CanvasContext);
-    const textBox = useRef(Rectangle);
-    const rectObj = textBox.current;
+    const {addDrawing, canvasPosition } = useContext(CanvasContext);
+
 
     function handleButtonClick() {
+        const rectObj = {x:0, y:0, width: 0, height: 0, color: 'white', id: 1};
         rectObj.x = 420;
         rectObj.y = 220;
         rectObj.width = 160;
@@ -48,26 +16,36 @@ function TextBoxButton() {
         rectObj.color = 'white';
         rectObj.id = 1
 
-        paintRect(rectObj);
+        rectObj.id = 1;
+        rectObj.x = 440;
+        rectObj.y = 220;
+        rectObj.width = 160;
+        rectObj.height = 60;
+        rectObj.color = 'white';
+
+        console.log(rectObj);
+
+        addDrawing('rectangle', rectObj);
     }
 
     function handleKeyDown(event) {
         switch(event.key) {
             case 'ArrowUp':
-                rectObj.y = (rectObj.y - 20);
-                paintRect(rectObj);
-            break;
+                rectObj.y -= 20;
+                console.log(rectObj);
+                addDrawing('rectangle', rectObj);
+                break;
             case 'ArrowDown':
                 rectObj.y = (rectObj.y + 20);
-                paintRect(rectObj);            
-            break;
+                addDrawing('rectangle', rectObj);
+                break;
             case 'ArrowLeft':
                 rectObj.x = (rectObj.x - 20);
-                paintRect(rectObj);            
-            break;
+                addDrawing('rectangle', rectObj);
+                break;
             case 'ArrowRight':
                 rectObj.x = (rectObj.x + 20);
-                paintRect(rectObj);            
+                addDrawing('rectangle', rectObj);
             break;
         };
     };
@@ -83,7 +61,6 @@ function TextBoxButton() {
             mousePosition = { x: (e.clientX - canvasPosition.x), y: (e.clientY - canvasPosition.y) };
         };
         if(mousePosition.x >= rectObj.x && mousePosition.x <= (rectObj.x + rectObj.width) && mousePosition.y >= rectObj.y && mousePosition.y <= (rectObj.y + rectObj.height)) {
-            console.log(mousePosition);
         };
 
     }
