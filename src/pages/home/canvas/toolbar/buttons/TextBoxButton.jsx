@@ -1,18 +1,16 @@
 import { useEffect, useContext, useRef, useState} from 'react';
 import CanvasContext from '../../CanvasContext';
 
-
-
 function TextBoxButton() {
-    const {addDrawing, canvasPosition } = useContext(CanvasContext);
+    const {addDrawing } = useContext(CanvasContext);
     const [textBoxes, setTextBoxes] = useState([]);
 
     function handleButtonClick() {
         setTextBoxes((prevTextBoxes)=> {
             const newTextBox = {
-                id: textBoxes.length + 1,
-                x: 940,
-                y: 470,
+                id: prevTextBoxes.length + 1,
+                x: 440,
+                y: 220,
                 width: 120,
                 height: 60,
                 color: 'white',
@@ -25,60 +23,45 @@ function TextBoxButton() {
         switch(event.key) {
             case 'ArrowUp':
                 setTextBoxes((prevTextBoxes => {
-                    return {...prevTextBoxes, y: prevTextBoxes.y - 20}
+                    const newObj = {...prevTextBoxes[0], y: prevTextBoxes[0].y - 20}
+                    return [newObj]
                 }));
                 break;
             case 'ArrowDown':
                 setTextBoxes((prevTextBoxes => {
-                    return {...prevTextBoxes, y: prevTextBoxes.y + 20}
+                    const newObj = {...prevTextBoxes[0], y: prevTextBoxes[0].y + 20}
+                    return [newObj]
                 }));
                 break;
             case 'ArrowLeft':
                 setTextBoxes((prevTextBoxes => {
-                    return {...prevTextBoxes, x: prevTextBoxes.x - 20}
-                }));                
+                    const newObj = {...prevTextBoxes[0], x: prevTextBoxes[0].x - 20}
+                    return [newObj]               
+                 }));                
                 break;
             case 'ArrowRight':
                 setTextBoxes((prevTextBoxes => {
-                    return {...prevTextBoxes, x: prevTextBoxes.x + 20}
+                    const newObj = {...prevTextBoxes[0], x: prevTextBoxes[0].x + 20}
+                    return [newObj]                
                 }));
             break;
         };
     };
-    function handleClick(e) {
-        let mousePosition = {}
-        if(e.clientX <= canvasPosition.x || e.clientX >= (canvasPosition.x + canvasPosition.width)) {
-            mousePosition = { x: 0, y: 0 };
-        }
-        else if(e.clientY <= canvasPosition.y || e.clientY >= (canvasPosition.y + canvasPosition.height)) {
-            mousePosition = { x: 0, y: 0 };
-        }
-        else {
-            mousePosition = { x: (e.clientX - canvasPosition.x), y: (e.clientY - canvasPosition.y) };
-        };
-        if(mousePosition.x >= textBoxes.x && mousePosition.x <= (textBoxes.x + textBoxes.width) && mousePosition.y >= textBoxes.y && mousePosition.y <= (textBoxes.y + textBoxes.height)) {
-        };
 
-    };
 
     useEffect(()=> {
-        addDrawing('rectangle', textBoxes);
+        if(textBoxes.length > 0) {
+            textBoxes.forEach((textBox)=> {
+                addDrawing('rectangle', textBox)
+            });
+            
+        };
     },[textBoxes]);
     
-    // useEffect(()=>{
-    //    window.addEventListener('keydown', handleKeyDown);
-    //    return () => window.removeEventListener('keydown', handleKeyDown)
-    // });
-
-    // useEffect(()=>{
-    //     document.addEventListener('mousedown', handleClick);
-    //     return () => document.removeEventListener('mousedown', handleClick)
-    // });
-
-    // useEffect(()=>{
-    //     document.addEventListener('mouseup', handleClick);
-    //     return () => document.removeEventListener('mouseup', handleClick)
-    // });
+    useEffect(()=>{
+       document.addEventListener('keydown', handleKeyDown);
+       return () => document.removeEventListener('keydown', handleKeyDown)
+    });
 
     return (
         <button className='textbox-button' onClick={handleButtonClick} >add text box</button>

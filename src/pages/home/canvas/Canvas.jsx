@@ -7,16 +7,15 @@ const Canvas = () => {
     const canvasWidth = 1000;
     const canvasHeight = 500;
     const canvasRef = useRef();
-    const [canvasPosition, setCanvasPosition] = useState();
     const{drawing, addDrawing} = useDrawing();
 
-    useEffect(() => {
-        if (!canvasPosition) setCanvasPosition(canvasRef.current.getBoundingClientRect());
-        function handleScroll() {
-            setCanvasPosition(canvasRef.current.getBoundingClientRect());
-        }
-        window.addEventListener('scroll', handleScroll);
-    });
+    // useEffect(() => {
+    //     if (!canvasPosition) setCanvasPosition(canvasRef.current.getBoundingClientRect());
+    //     function handleScroll() {
+    //         setCanvasPosition(canvasRef.current.getBoundingClientRect());
+    //     }
+    //     window.addEventListener('scroll', handleScroll);
+    // });
 
 
 
@@ -78,7 +77,6 @@ const Canvas = () => {
     const contextValue = {
         paintImg: paintImg,
         paintRect: paintRect,
-        canvasPosition: canvasPosition,
         addDrawing: addDrawing,
     };
     return (
