@@ -1,5 +1,5 @@
-import memeImg from '../data/meme-data';
 import { useContext } from 'react';
+import memeImg from '../data/meme-data';
 import CanvasContext from '../../CanvasContext';
 
 function RandomMemeButton() {

@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
-import CanvasToolbar from "./toolbar/CanvasToolbar"
-import CanvasContext from './CanvasContext';
+import CanvasToolbar from './toolbar/CanvasToolbar'; 
+import CanvasContext from './CanvasContext'
+import useDrawing from './hooks/useDrawing';
 
 const Canvas = () => {
     const canvasWidth = 1000;
