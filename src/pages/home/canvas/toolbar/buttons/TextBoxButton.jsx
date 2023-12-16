@@ -5,7 +5,7 @@ import CanvasContext from '../../CanvasContext';
 
 function TextBoxButton() {
     const {addDrawing, canvasPosition } = useContext(CanvasContext);
-    const [textBoxes, setTextBoxes] = useState();
+    const [textBoxes, setTextBoxes] = useState([]);
 
     function handleButtonClick() {
         setTextBoxes((prevTextBoxes)=> {
@@ -65,20 +65,20 @@ function TextBoxButton() {
         addDrawing('rectangle', textBoxes);
     },[textBoxes]);
     
-    useEffect(()=>{
-       window.addEventListener('keydown', handleKeyDown);
-       return () => window.removeEventListener('keydown', handleKeyDown)
-    });
+    // useEffect(()=>{
+    //    window.addEventListener('keydown', handleKeyDown);
+    //    return () => window.removeEventListener('keydown', handleKeyDown)
+    // });
 
-    useEffect(()=>{
-        document.addEventListener('mousedown', handleClick);
-        return () => document.removeEventListener('mousedown', handleClick)
-    });
+    // useEffect(()=>{
+    //     document.addEventListener('mousedown', handleClick);
+    //     return () => document.removeEventListener('mousedown', handleClick)
+    // });
 
-    useEffect(()=>{
-        document.addEventListener('mouseup', handleClick);
-        return () => document.removeEventListener('mouseup', handleClick)
-    });
+    // useEffect(()=>{
+    //     document.addEventListener('mouseup', handleClick);
+    //     return () => document.removeEventListener('mouseup', handleClick)
+    // });
 
     return (
         <button className='textbox-button' onClick={handleButtonClick} >add text box</button>

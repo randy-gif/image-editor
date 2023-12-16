@@ -42,10 +42,14 @@ function useDrawing() {
   }
 
   const addDrawing = (type: DrawingType, newDrawing: DrawingObject | string) => {
+    if (newDrawing === undefined || typeof type !== 'string' || typeof newDrawing !== 'string' && !(newDrawing instanceof Object) || typeof newDrawing === 'object' && !('id' in newDrawing)) {
+      console.error('Invalid type or newDrawing');
+      return 1;
+    };
     if (!verifyType(type)) {
       console.error('Type does not exist');
       return 1;
-    } else {
+    }else {
       setDrawing((prevDrawing) => {
         return prevDrawing.map((item) =>
           item.type === type
