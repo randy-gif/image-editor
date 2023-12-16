@@ -57,16 +57,17 @@ const Canvas = () => {
         ctx.strokeRect(rectObj.x, rectObj.y , rectObj.width, rectObj.height);
     };
 
+
     
     function paintImg(imgObj) {
-        if(imgObj.height > canvasHeight) {
-            imgObj.width = ((imgObj.width * canvasHeight)/imgObj.height);
-            imgObj.height = canvasHeight;
+        if(imgObj.img.height > canvasHeight) {
+            imgObj.img.width = ((imgObj.img.width * canvasHeight)/imgObj.img.height);
+            imgObj.img.height = canvasHeight;
         }
-        const x = ((canvasWidth - imgObj.width)/2);
-        const y = ((canvasHeight - imgObj.height)/2);
+        const x = ((canvasWidth - imgObj.img.width)/2);
+        const y = ((canvasHeight - imgObj.img.height)/2);
         const ctx = canvasRef.current.getContext("2d");
-        ctx.drawImage(imgObj, x, y, imgObj.width, imgObj.height);
+        ctx.drawImage(imgObj.img, x, y, imgObj.img.width, imgObj.img.height);
     };
 
     function paintBackground(color) {

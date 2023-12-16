@@ -17,11 +17,16 @@ interface Circle {
   radius: number;
 }
 
+interface Img {
+  id: number;
+  img: typeof Image
+}
+
 // Define the generic drawing type that can be one of the specific types
 type DrawingType = 'backgroundColor' | 'img' | 'circle' | 'rectangle' | 'triangle' | 'line' | 'text';
 
 // Union type of all specific drawing types
-type DrawingObject = Rectangle | Circle;
+type DrawingObject = Rectangle | Circle | Img;
 
 function useDrawing() {
   const [drawing, setDrawing] = useState<({
