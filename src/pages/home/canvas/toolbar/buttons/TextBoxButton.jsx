@@ -2,19 +2,20 @@ import { useEffect, useContext, useRef, useState} from 'react';
 import CanvasContext from '../../CanvasContext';
 
 function TextBoxButton() {
-    const {addDrawing } = useContext(CanvasContext);
+    const {addRectangle, replaceRectangle} = useContext(CanvasContext);
     const [textBoxes, setTextBoxes] = useState([]);
 
     function handleButtonClick() {
+        const newTextBox = {
+            id: 2,
+            x: 440,
+            y: 220,
+            width: 120,
+            height: 60,
+            color: 'white',
+        }
+        addRectangle(newTextBox);
         setTextBoxes((prevTextBoxes)=> {
-            const newTextBox = {
-                id: prevTextBoxes.length + 1,
-                x: 440,
-                y: 220,
-                width: 120,
-                height: 60,
-                color: 'white',
-            }
             return [...prevTextBoxes, newTextBox]
         }) 
     }
@@ -42,7 +43,7 @@ function TextBoxButton() {
             case 'ArrowRight':
                 setTextBoxes((prevTextBoxes => {
                     const newObj = {...prevTextBoxes[0], x: prevTextBoxes[0].x + 20}
-                    return [newObj]                
+                    return [ newObj]                
                 }));
             break;
         };
@@ -52,7 +53,7 @@ function TextBoxButton() {
     useEffect(()=> {
         if(textBoxes.length > 0) {
             textBoxes.forEach((textBox)=> {
-                addDrawing('rectangle', textBox)
+                replaceRectangle(textBox.id, textBox);
             });
             
         };
