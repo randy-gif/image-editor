@@ -8,7 +8,7 @@ const Canvas = () => {
     const canvasHeight = 500;
     const canvasRef = useRef();
     const{
-        drawing,
+        drawings: drawings,
         addRectangle, 
         addBackgroundColor,
         addCircle, 
@@ -19,50 +19,40 @@ const Canvas = () => {
         replaceBackgroundColor
     } = useDrawing();
 
-    // useEffect(() => {
-    //     if (!canvasPosition) setCanvasPosition(canvasRef.current.getBoundingClientRect());
-    //     function handleScroll() {
-    //         setCanvasPosition(canvasRef.current.getBoundingClientRect());
-    //     }
-    //     window.addEventListener('scroll', handleScroll);
-    // });
-
-
-
     // this useEffect paints the painting state on the canvas //
     useEffect(()=> {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         context.clearRect(0, 0, canvas.width, canvas.height);
         
-        for (let i = 0; i < drawing.length; i++) {
-            for (let j = 0; j < drawing[i].drawingObjs.length; j++) {
-                switch(drawing[i].type) {
+        for (let i = 0; i < drawings.length; i++) {
+            for (let j = 0; j < drawings[i].drawingObjs.length; j++) {
+                switch(drawings[i].type) {
                     case 'backgroundColor':
-                        paintBackground(drawing[i].drawingObjs[j]);
+                        paintBackground(drawings[i].drawingObjs[j]);
                     break;
                     case 'img':
-                        paintImg(drawing[i].drawingObjs[j]);
+                        paintImg(drawings[i].drawingObjs[j]);
                     break;
                     case 'circle':
-                        paintCircle(drawing[i].drawingObjs[j]);
+                        paintCircle(drawings[i].drawingObjs[j]);
                     break;
                     case 'rectangle':
-                        paintRect(drawing[i].drawingObjs[j]);
+                        paintRect(drawings[i].drawingObjs[j]);
                     break;
                     case 'triangle':
-                        paintTriangle(drawing[i].drawingObjs[j]);
+                        paintTriangle(drawings[i].drawingObjs[j]);
                     break;
                     case 'line':
-                        paintLine(drawing[i].drawingObjs[j]);
+                        paintLine(drawings[i].drawingObjs[j]);
                     break;
                     case 'text':
-                        paintText(drawing[i].drawingObjs[j]);
+                        paintText(drawings[i].drawingObjs[j]);
                     break;
                 };
             };  
         };
-    },[drawing]);
+    },[drawings]);
 
     function paintRect(rectObj) {
         const ctx = canvasRef.current.getContext("2d");
@@ -87,9 +77,33 @@ const Canvas = () => {
         ctx.fillRect(0, 0 , canvasWidth, canvasHeight);
     }
 
-    function handleMouseDown() {
+    const getCanvasPosition = () => {
+        const canvas = canvasRef.current;
+        const canvasPosition = canvas.getBoundingClientRect();
+        return {
+            x: canvasPosition.left,
+            y: canvasPosition.top,
+            width: canvasPosition.width,
+            height: canvasPosition.height
+        }
+    }
 
-    };
+    const getDrawingsPosition = () => {
+        return drawings.flatMap(drawing => drawing.drawingObjs.map(drawingObj => {
+            return {id: drawingObj.id, x:drawingObj.x, y:drawingObj.y, width: drawingObj.width, height: drawingObj.height};
+        }));
+    }
+    function handleMouseDown(e) {
+        const drawingPosition = getDrawingsPosition();
+        const canvasPosition = getCanvasPosition();
+        const clientX = e.clientX - canvasPosition.x;
+        const clientY = e.clientY - canvasPosition.y;
+        if (drawingPosition.some(drawing => drawing.x <= clientX && drawing.x + drawing.width >= clientX && drawing.y <= clientY && drawing.y + drawing.height >= clientY)) {
+            const drawingClicked = drawings.flatMap(drawing => drawing.drawingObjs.filter(drawingObj => drawingObj.x <= clientX && drawingObj.x + drawingObj.width >= clientX && drawingObj.y <= clientY && drawingObj.y + drawingObj.height >= clientY ));
+            console.log(drawingClicked);
+        }
+
+    }
 
     function handleMouseUp() {
 
@@ -101,8 +115,7 @@ const Canvas = () => {
         addBackgroundColor: addBackgroundColor,
         addCircle: addCircle,
         addImg: addImg,
-        drawing: drawing,
-        handleMouseDown: handleMouseDown,
+        drawing: drawings,
         replaceRectangle: replaceRectangle,
     };
     return (

@@ -14,7 +14,7 @@ function RandomMemeButton() {
         const img = new Image();
         img.src = randomMeme().url;
         img.onload = function() {
-            addImg({id: 1, img: img});
+            addImg({img: img, id: 4});
         };
     };
 

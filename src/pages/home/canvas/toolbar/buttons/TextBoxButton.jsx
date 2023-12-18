@@ -13,11 +13,10 @@ function TextBoxButton() {
             width: 120,
             height: 60,
             color: 'white',
+            draggable: true,
         }
         addRectangle(newTextBox);
-        setTextBoxes((prevTextBoxes)=> {
-            return [...prevTextBoxes, newTextBox]
-        }) 
+        setTextBoxes([...textBoxes, newTextBox]);
     }
 
     function handleKeyDown(event) {
@@ -38,7 +37,7 @@ function TextBoxButton() {
                 setTextBoxes((prevTextBoxes => {
                     const newObj = {...prevTextBoxes[0], x: prevTextBoxes[0].x - 20}
                     return [newObj]               
-                 }));                
+                 }));     
                 break;
             case 'ArrowRight':
                 setTextBoxes((prevTextBoxes => {
