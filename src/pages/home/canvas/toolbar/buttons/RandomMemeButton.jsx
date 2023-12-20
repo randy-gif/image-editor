@@ -3,7 +3,7 @@ import memeImg from '../data/meme-data';
 import CanvasContext from '../../CanvasContext';
 
 function RandomMemeButton() {
-    const {addImg} = useContext(CanvasContext);
+    const {createImg} = useContext(CanvasContext);
 
     function randomMeme() {
         const randomNum = Math.floor(Math.random() * (memeImg.data.memes.length)) 
@@ -14,7 +14,7 @@ function RandomMemeButton() {
         const img = new Image();
         img.src = randomMeme().url;
         img.onload = function() {
-            addImg({img: img, id: 4});
+            createImg({img: img, widht: img.width, height: img.height});
         };
     };
 

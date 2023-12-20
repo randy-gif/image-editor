@@ -7,58 +7,43 @@ const Canvas = () => {
     const canvasWidth = 1000;
     const canvasHeight = 500;
     const canvasRef = useRef();
-    const{
-        drawings: drawings,
-        addRectangle, 
-        addBackgroundColor,
-        addCircle, 
-        addImg, 
-        replaceRectangle, 
-        replaceCircle, 
-        replaceImg, 
-        replaceBackgroundColor
+    const{ 
+        drawings,
+        createRectangle,
+        createCircle,
+        createImg,
+        updateCircle,
+        updateImg,
+        updateRectangle,
+        setClicked,
+        getDrawingById,
     } = useDrawing();
 
-    // this useEffect paints the painting state on the canvas //
+    // this useEffect paints the drawings state on the canvas //
     useEffect(()=> {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         context.clearRect(0, 0, canvas.width, canvas.height);
-        
-        for (let i = 0; i < drawings.length; i++) {
-            for (let j = 0; j < drawings[i].drawingObjs.length; j++) {
-                switch(drawings[i].type) {
-                    case 'backgroundColor':
-                        paintBackground(drawings[i].drawingObjs[j]);
+        console.log(drawings);
+        drawings.forEach(drawing => {
+            switch(drawing.type){
+                case'Rectangle':
+                    context.strokeStyle  = drawing.color;
+                    context.strokeRect (drawing.x, drawing.y, drawing.width, drawing.height);
                     break;
-                    case 'img':
-                        paintImg(drawings[i].drawingObjs[j]);
+                case 'Circle':
+                    context.fillStyle = drawing.color;
+                    context.beginPath();
+                    context.arc(drawing.x, drawing.y, drawing.radius, 0, 2 * Math.PI);
+                    context.fill();
                     break;
-                    case 'circle':
-                        paintCircle(drawings[i].drawingObjs[j]);
+                case 'Img':
+                    context.drawImage(drawing.img, drawing.x, drawing.y);
                     break;
-                    case 'rectangle':
-                        paintRect(drawings[i].drawingObjs[j]);
-                    break;
-                    case 'triangle':
-                        paintTriangle(drawings[i].drawingObjs[j]);
-                    break;
-                    case 'line':
-                        paintLine(drawings[i].drawingObjs[j]);
-                    break;
-                    case 'text':
-                        paintText(drawings[i].drawingObjs[j]);
-                    break;
-                };
-            };  
-        };
+            }
+        });
     },[drawings]);
 
-    function paintRect(rectObj) {
-        const ctx = canvasRef.current.getContext("2d");
-        ctx.strokeStyle = rectObj.color;
-        ctx.strokeRect(rectObj.x, rectObj.y , rectObj.width, rectObj.height);
-    };
     
     function paintImg(imgObj) {
         if(imgObj.img.height > canvasHeight) {
@@ -71,12 +56,6 @@ const Canvas = () => {
         ctx.drawImage(imgObj.img, x, y, imgObj.img.width, imgObj.img.height);
     };
 
-    function paintBackground(color) {
-        const ctx = canvasRef.current.getContext("2d");
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0 , canvasWidth, canvasHeight);
-    }
-
     const getCanvasPosition = () => {
         const canvas = canvasRef.current;
         const canvasPosition = canvas.getBoundingClientRect();
@@ -88,35 +67,68 @@ const Canvas = () => {
         }
     }
 
-    const getDrawingsPosition = () => {
-        return drawings.flatMap(drawing => drawing.drawingObjs.map(drawingObj => {
-            return {id: drawingObj.id, x:drawingObj.x, y:drawingObj.y, width: drawingObj.width, height: drawingObj.height};
-        }));
-    }
     function handleMouseDown(e) {
-        const drawingPosition = getDrawingsPosition();
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
-        if (drawingPosition.some(drawing => drawing.x <= clientX && drawing.x + drawing.width >= clientX && drawing.y <= clientY && drawing.y + drawing.height >= clientY)) {
-            const drawingClicked = drawings.flatMap(drawing => drawing.drawingObjs.filter(drawingObj => drawingObj.x <= clientX && drawingObj.x + drawingObj.width >= clientX && drawingObj.y <= clientY && drawingObj.y + drawingObj.height >= clientY ));
-            console.log(drawingClicked);
+        const drawingsCliked = drawings.filter(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.width && clientY >= drawing.y && clientY <= drawing.y + drawing.height))
+        if (drawingsCliked) {
+            drawingsCliked.forEach(drawing => setClicked(drawing.id, true));
+        } 
+    }
+
+    function handleMouseUp(e) {
+        const canvasPosition = getCanvasPosition();
+        const clientX = e.clientX - canvasPosition.x;
+        const clientY = e.clientY - canvasPosition.y;
+        const drawingsCliked = drawings.filter(drawing => drawing.clicked === true);
+        if (drawingsCliked) {
+            drawingsCliked.forEach(drawing => {
+                switch(drawing.type) {
+                    case 'Rectangle':
+                        updateRectangle({
+                            x: clientX - drawing.width/2,
+                            y: clientY - drawing.height/2,
+                            width: drawing.width,
+                            height: drawing.height,
+                            color: drawing.color,
+                            clicked: false
+                        }, drawing.id,);
+                        break;
+                    case 'Circle':
+                        updateCircle({
+                            x: clientX - drawing.width/2,
+                            y: clientY - drawing.height/2,
+                            radius: drawing.radius,
+                            color: drawing.color,
+                            clicked: false
+                        }, drawing.id);
+                        break;
+                    case 'Img':
+                        paintImg(drawing);
+                        updateImg({
+                            img: drawing.img,
+                            x: clientX - drawing.width/2,
+                            y: clientY - drawing.height/2,
+                            width: drawing.img.width,
+                            height: drawing.img.height,
+                            clicked: false
+                        }, drawing.id);
+                        break;
+                }
+    
+            });
         }
-
     }
 
-    function handleMouseUp() {
-
-    }
     const contextValue = {
         paintImg: paintImg,
-        paintRect: paintRect,
-        addRectangle: addRectangle,
-        addBackgroundColor: addBackgroundColor,
-        addCircle: addCircle,
-        addImg: addImg,
+        createRectangle: createRectangle,
+        updateRectangle: updateRectangle,
+        createCircle: createCircle,
+        createImg: createImg,
         drawing: drawings,
-        replaceRectangle: replaceRectangle,
+        getDrawingById: getDrawingById
     };
     return (
         <CanvasContext.Provider value={contextValue}>

@@ -2,61 +2,48 @@ import { useEffect, useContext, useRef, useState} from 'react';
 import CanvasContext from '../../CanvasContext';
 
 function TextBoxButton() {
-    const {addRectangle, replaceRectangle} = useContext(CanvasContext);
+    const {createRectangle, updateRectangle, getDrawingById} = useContext(CanvasContext);
     const [textBoxes, setTextBoxes] = useState([]);
 
     function handleButtonClick() {
         const newTextBox = {
-            id: 2,
             x: 440,
             y: 220,
             width: 120,
             height: 60,
             color: 'white',
-            draggable: true,
         }
-        addRectangle(newTextBox);
-        setTextBoxes([...textBoxes, newTextBox]);
+        const rectangleId = createRectangle(newTextBox);
+        setTextBoxes([...textBoxes, rectangleId ]);
     }
 
     function handleKeyDown(event) {
+        const rect = getDrawingById(textBoxes[0]);
         switch(event.key) {
             case 'ArrowUp':
-                setTextBoxes((prevTextBoxes => {
-                    const newObj = {...prevTextBoxes[0], y: prevTextBoxes[0].y - 20}
-                    return [newObj]
-                }));
+                updateRectangle({...rect, y: rect.y - 20}, textBoxes[0] );
                 break;
             case 'ArrowDown':
-                setTextBoxes((prevTextBoxes => {
-                    const newObj = {...prevTextBoxes[0], y: prevTextBoxes[0].y + 20}
-                    return [newObj]
-                }));
+                updateRectangle({...rect, y: rect.y + 20}, textBoxes[0] );
                 break;
             case 'ArrowLeft':
-                setTextBoxes((prevTextBoxes => {
-                    const newObj = {...prevTextBoxes[0], x: prevTextBoxes[0].x - 20}
-                    return [newObj]               
-                 }));     
+                updateRectangle({...rect, x: rect.x - 20}, textBoxes[0] );
                 break;
             case 'ArrowRight':
-                setTextBoxes((prevTextBoxes => {
-                    const newObj = {...prevTextBoxes[0], x: prevTextBoxes[0].x + 20}
-                    return [ newObj]                
-                }));
+                updateRectangle({...rect, x: rect.x + 20}, textBoxes[0] );
             break;
         };
     };
 
 
-    useEffect(()=> {
-        if(textBoxes.length > 0) {
-            textBoxes.forEach((textBox)=> {
-                replaceRectangle(textBox.id, textBox);
-            });
+    // useEffect(()=> {
+    //     if(textBoxes.length > 0) {
+    //         textBoxes.forEach((textBox)=> {
+    //             updateRectangle(textBox.id, textBox);
+    //         });
             
-        };
-    },[textBoxes]);
+    //     };
+    // },[textBoxes]);
     
     useEffect(()=>{
        document.addEventListener('keydown', handleKeyDown);
