@@ -1,9 +1,6 @@
-import { useState } from 'react';
-
 type Id = string;
 
-const useId = (): Id => {
-  const [idCounter, setIdCounter] = useState<number>(0);
+const getUniqueId = () => {
 
   const generateRandomId = (): string => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
@@ -19,12 +16,11 @@ const useId = (): Id => {
   };
 
   const generateUniqueId = (): Id => {
-    setIdCounter((prevCounter) => prevCounter + 1);
-    const newIdCounter = idCounter + 1;
-    return `id_${newIdCounter}_${generateRandomId()}`;
+    const date = new Date();
+    return `id_${date}${generateRandomId()}`;
   };
 
   return generateUniqueId();
 };
 
-export default useId;
+export default getUniqueId;

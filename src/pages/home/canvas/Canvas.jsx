@@ -1,60 +1,22 @@
 import { useRef, useEffect, useState } from "react";
 import CanvasToolbar from './toolbar/CanvasToolbar'; 
 import CanvasContext from './CanvasContext'
-import useDrawing from './hooks/useDrawing';
+import useDrawingObjArray from './hooks/useDrawing';
+import { createRectangle } from './createDrawingObjects';
 
 const Canvas = () => {
     const canvasWidth = 1000;
     const canvasHeight = 500;
     const canvasRef = useRef();
-    const{ 
-        drawings,
-        createRectangle,
-        createCircle,
-        createImg,
-        updateCircle,
-        updateImg,
-        updateRectangle,
-        setClicked,
-        getDrawingById,
-    } = useDrawing();
 
-    // this useEffect paints the drawings state on the canvas //
+    const { drawingObjs, addDrawing, removeDrawing, updateDrawing } = useDrawingObjArray();
+
     useEffect(()=> {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        console.log(drawings);
-        drawings.forEach(drawing => {
-            switch(drawing.type){
-                case'Rectangle':
-                    context.strokeStyle  = drawing.color;
-                    context.strokeRect (drawing.x, drawing.y, drawing.width, drawing.height);
-                    break;
-                case 'Circle':
-                    context.fillStyle = drawing.color;
-                    context.beginPath();
-                    context.arc(drawing.x, drawing.y, drawing.radius, 0, 2 * Math.PI);
-                    context.fill();
-                    break;
-                case 'Img':
-                    context.drawImage(drawing.img, drawing.x, drawing.y);
-                    break;
-            }
-        });
-    },[drawings]);
-
-    
-    function paintImg(imgObj) {
-        if(imgObj.img.height > canvasHeight) {
-            imgObj.img.width = ((imgObj.img.width * canvasHeight)/imgObj.img.height);
-            imgObj.img.height = canvasHeight;
-        }
-        const x = ((canvasWidth - imgObj.img.width)/2);
-        const y = ((canvasHeight - imgObj.img.height)/2);
-        const ctx = canvasRef.current.getContext("2d");
-        ctx.drawImage(imgObj.img, x, y, imgObj.img.width, imgObj.img.height);
-    };
+        console.log(drawingObjs, "canvas");
+        drawingObjs.forEach(drawing => {
+            ctx.drawImage(drawing.imageBitmap, 0, 0);
+    }   );
+    });
 
     const getCanvasPosition = () => {
         const canvas = canvasRef.current;
@@ -71,9 +33,12 @@ const Canvas = () => {
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
-        const drawingsCliked = drawings.filter(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.width && clientY >= drawing.y && clientY <= drawing.y + drawing.height))
-        if (drawingsCliked) {
-            drawingsCliked.forEach(drawing => setClicked(drawing.id, true));
+        const drawingCliked = drawingObjs.reverse().findIndex(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.width && clientY >= drawing.y && clientY <= drawing.y + drawing.height))
+        if (drawingCliked) {
+            updateDrawing( drawingCliked.id, {
+                ...drawingCliked,
+                clicked: true
+            })
         } 
     }
 
@@ -122,13 +87,7 @@ const Canvas = () => {
     }
 
     const contextValue = {
-        paintImg: paintImg,
         createRectangle: createRectangle,
-        updateRectangle: updateRectangle,
-        createCircle: createCircle,
-        createImg: createImg,
-        drawing: drawings,
-        getDrawingById: getDrawingById
     };
     return (
         <CanvasContext.Provider value={contextValue}>
