@@ -8,10 +8,6 @@ function useDrawingObjArray() {
     const removeDrawing = (id: string) => {
         setDrawingObjs(drawingObjs.filter((obj) => obj.id!== id));
     };
-    useEffect(() => {
-        console.log(drawingObjs);
-    },[drawingObjs]);
-
     const updateDrawing = (id: string, obj: DrawingObject) => {
         setDrawingObjs(drawingObjs.map((drawingObj) => (drawingObj.id === id? obj : drawingObj)));
     };

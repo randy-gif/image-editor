@@ -16,8 +16,14 @@ const getUniqueId = () => {
   };
 
   const generateUniqueId = (): Id => {
-    const date = new Date();
-    return `id_${date}${generateRandomId()}`;
+    const date = new Date().toISOString().toString();
+    let dateId = '';
+    for (const char of date) {
+      if (char !== '-' && char !== ':' && char !== '.') {
+        dateId += char;
+      }
+    }
+    return `${dateId}${generateRandomId()}`;
   };
 
   return generateUniqueId();

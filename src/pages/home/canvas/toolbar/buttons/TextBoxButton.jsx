@@ -1,15 +1,12 @@
 import { useEffect, useContext, useRef, useState} from 'react';
 import CanvasContext from '../../CanvasContext';
-import useDrawingObjArray from '../../hooks/useDrawing';
 
 function TextBoxButton() {
-    const { createRectangle } = useContext(CanvasContext);
+    const { createRectangle, addDrawing } = useContext(CanvasContext);
     const [textBoxes, setTextBoxes] = useState([]);
-    const { addDrawing, removeDrawing, updateDrawing } = useDrawingObjArray();
 
     async function handleButtonClick() {
-        const rectangleObj = await createRectangle(440, 220, 120, 60, 'white');
-        console.log(rectangleObj);
+        const rectangleObj = await createRectangle(120, 60, 'white');
         addDrawing(rectangleObj);
         setTextBoxes([...textBoxes, rectangleObj ]);
     }

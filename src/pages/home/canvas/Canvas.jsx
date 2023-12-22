@@ -12,11 +12,13 @@ const Canvas = () => {
     const { drawingObjs, addDrawing, removeDrawing, updateDrawing } = useDrawingObjArray();
 
     useEffect(()=> {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
         console.log(drawingObjs, "canvas");
         drawingObjs.forEach(drawing => {
             ctx.drawImage(drawing.imageBitmap, 0, 0);
     }   );
-    });
+    },[drawingObjs]);
 
     const getCanvasPosition = () => {
         const canvas = canvasRef.current;
@@ -88,6 +90,9 @@ const Canvas = () => {
 
     const contextValue = {
         createRectangle: createRectangle,
+        addDrawing: addDrawing,
+        removeDrawing: removeDrawing,
+        updateDrawing: updateDrawing
     };
     return (
         <CanvasContext.Provider value={contextValue}>
