@@ -5,17 +5,19 @@ import CanvasContext from './CanvasContext'
 import useDrawingObjArray from './hooks/useDrawing';
 import { createRectangle } from './createDrawingObjects';
 import { drawFocusOutline } from "./drawFocusOutline";
+import useWindowDimensions from "./hooks/useWindowDimensions";
 import './Canvas.css';
 
 const Canvas = () => {
-    const canvasWidth = 1000;
-    const canvasHeight = 500;
-    const canvasRef = useRef();
-
     const { drawingObjs, addDrawing, removeDrawing, updateDrawing } = useDrawingObjArray();
+    const windowDimensions = useWindowDimensions();
+
+    const mainCanvasRef = useRef();
+    const drawingCanvasRef = useRef();
+
 
     useEffect(()=> {
-        const canvas = canvasRef.current;
+        const canvas = mainCanvasRef.current;
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawingObjs.forEach(drawing => {
@@ -25,7 +27,7 @@ const Canvas = () => {
     },[drawingObjs]);
 
     const getCanvasPosition = () => {
-        const canvas = canvasRef.current;
+        const canvas = mainCanvasRef.current;
         const canvasPosition = canvas.getBoundingClientRect();
         return {
             x: canvasPosition.left,
@@ -95,9 +97,12 @@ const Canvas = () => {
     return (
         <CanvasContext.Provider value={contextValue}>
             <section className="workspace">
-                <SideBar/>
+                <div className="containor">
+                    <SideBar/>
+                    <canvas onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} className='main-canvas' ref={mainCanvasRef} height={windowDimensions.height} width={windowDimensions.width} />
+                    <canvas ref={drawingCanvasRef} className="drawing-canvas"/>
+                </div>
                 <BottomBar/>
-                <canvas onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} className='my-canvas' ref={canvasRef} height={canvasHeight} width={canvasWidth} />
             </section>
         </CanvasContext.Provider>
     );

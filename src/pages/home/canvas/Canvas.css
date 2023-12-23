@@ -2,29 +2,36 @@
 /**************************workspace**********************************/
 
 .workspace {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  height: 100%;
+
 }
 
+.containor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
 
 /**************************canvas**********************************/
-.my-canvas {
+.drawing-canvas {
     background-image: url('./assets/transparent_background.png');
 }
 
 /**************************SideBar**********************************/
 .sidebar-container {
+  bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
-  height: 100%;
+  justify-content: space-evenly;
+  padding-left: 20px;
+  padding-right: 20px;
   background-color: #292c31;
   color: white;
-  padding-left: 2%;
-  padding-right: 2%;
+  position: absolute;
+  height: 100%;
+  z-index: 96;
 }
 
 .sidebar-li {
@@ -41,13 +48,35 @@
   left: 0;
   height: 50px;
   width: 100%;
-  justify-content: flex-end;
+  justify-content: center;
   position: absolute;
   z-index: 91;
   background-color: #292c31;
 }
 
 .zoom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 25px;
+  padding-left: 25px;
+  height: 28px;
+  border-left: 2px solid whitesmoke;
+}
+
+.history {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 25px;
+  padding-left: 25px;
+  height: 28px;
+  border-left: 2px solid whitesmoke;
+}
+
+.save {
   display: flex;
   align-items: center;
   justify-content: center;
