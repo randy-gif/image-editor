@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import getUniqueId from './utils/getUniqueId';
+import { createBitmap } from './utils/createBitmap';
 import { 
   shapeType,
   CanvasObject,
@@ -12,17 +13,7 @@ import {
   } from './drawingTypes';
 
 
-async function createBitmapFromImageData(imageData: ImageData) : Promise<ImageBitmap> {
-  return new Promise((resolve, reject) => {
-    createImageBitmap(imageData)
-    .then((imageBitmap) => {
-      resolve(imageBitmap);
-    })
-    .catch((error) => {
-      reject(error);
-    });
-  });
-};
+
 
 const initializeObject = (name? : string, type? : shapeType, width?: number, height?: number, x?: number, y?: number, draggable? : boolean) : CanvasObject => {
   const defaultType: shapeType = 'None';
@@ -43,7 +34,9 @@ const initializeObject = (name? : string, type? : shapeType, width?: number, hei
 };
 
 export async function createRectangle(width: number, height: number, color?: 'string') : Promise<Rectangle> {
-  const canvas = new OffscreenCanvas(width, height);
+  const canvasWidth = width * 1.4;
+  const canvasHeight = height * 1.4;
+  const canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
   const ctx = canvas.getContext('2d');
 
   const type: shapeType = 'Rectangle';
@@ -51,9 +44,9 @@ export async function createRectangle(width: number, height: number, color?: 'st
   
   if(ctx) {
     ctx.fillStyle = fillColor;
-    ctx.fillRect(0, 0, width, height);
-    const imageBitmap = canvas.transferToImageBitmap()
-    console.log(canvas);
+    ctx.fillRect(canvasWidth / 2 - width / 2, canvasHeight / 2 - height / 2, width, height);
+    const imageBitmap = await createBitmap(canvas);
+    console.log(imageBitmap);
   
     let rectangleObj = {
       ...initializeObject('rectangle', type, width, height, 0, 0),
@@ -61,6 +54,8 @@ export async function createRectangle(width: number, height: number, color?: 'st
        width: width,
        height: height,
        imageBitmap: imageBitmap,
+       objectWidth: canvasWidth,
+       objectHeight: canvasHeight,
     };
     return rectangleObj;
   }else {

@@ -1,8 +1,11 @@
 import { useRef, useEffect, useState } from "react";
-import CanvasToolbar from './toolbar/CanvasToolbar'; 
+import SideBar from './toolbar/SideBar'; 
+import BottomBar from './BottomBar';
 import CanvasContext from './CanvasContext'
 import useDrawingObjArray from './hooks/useDrawing';
 import { createRectangle } from './createDrawingObjects';
+import { drawFocusOutline } from "./drawFocusOutline";
+import './Canvas.css';
 
 const Canvas = () => {
     const canvasWidth = 1000;
@@ -14,9 +17,10 @@ const Canvas = () => {
     useEffect(()=> {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        console.log(drawingObjs, "canvas");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawingObjs.forEach(drawing => {
-            ctx.drawImage(drawing.imageBitmap, 0, 0);
+            if (drawing.focused) drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth, drawing.objectHeight);
+            ctx.drawImage(drawing.imageBitmap, drawing.x, drawing.y);
     }   );
     },[drawingObjs]);
 
@@ -35,58 +39,52 @@ const Canvas = () => {
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
-        const drawingCliked = drawingObjs.reverse().findIndex(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.width && clientY >= drawing.y && clientY <= drawing.y + drawing.height))
+        const drawingCliked = drawingObjs.reverse().find(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.objectWidth && clientY >= drawing.y && clientY <= drawing.y + drawing.objectHeight))
         if (drawingCliked) {
             updateDrawing( drawingCliked.id, {
                 ...drawingCliked,
-                clicked: true
-            })
-        } 
+                clicked: true,
+                focused: true,
+            });
+            drawingObjs.forEach(drawing => {
+                if(drawingCliked.id !== drawing.id) {
+                    console.log(drawingCliked.id, drawing.id, 'not same');
+                    updateDrawing(drawing.id, {
+                        ...drawing,
+                        clicked: false,
+                        focused: false,
+                    })
+                }else {
+                    console.log(drawingCliked.id, drawing.id, 'same');
+                }
+            });
+        }else if(!drawingCliked) {
+            console.log('no drawing clicked');
+            drawingObjs.forEach(drawing => {
+                updateDrawing(drawing.id, {
+                    ...drawing,
+                    clicked: false,
+                    focused: false,
+                })
+            });
+        }
+  
     }
 
     function handleMouseUp(e) {
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
-        const drawingsCliked = drawings.filter(drawing => drawing.clicked === true);
-        if (drawingsCliked) {
-            drawingsCliked.forEach(drawing => {
-                switch(drawing.type) {
-                    case 'Rectangle':
-                        updateRectangle({
-                            x: clientX - drawing.width/2,
-                            y: clientY - drawing.height/2,
-                            width: drawing.width,
-                            height: drawing.height,
-                            color: drawing.color,
-                            clicked: false
-                        }, drawing.id,);
-                        break;
-                    case 'Circle':
-                        updateCircle({
-                            x: clientX - drawing.width/2,
-                            y: clientY - drawing.height/2,
-                            radius: drawing.radius,
-                            color: drawing.color,
-                            clicked: false
-                        }, drawing.id);
-                        break;
-                    case 'Img':
-                        paintImg(drawing);
-                        updateImg({
-                            img: drawing.img,
-                            x: clientX - drawing.width/2,
-                            y: clientY - drawing.height/2,
-                            width: drawing.img.width,
-                            height: drawing.img.height,
-                            clicked: false
-                        }, drawing.id);
-                        break;
-                }
-    
+        const drawingCliked = drawingObjs.find(drawing => drawing.clicked)
+        if (drawingCliked) {
+            updateDrawing(drawingCliked.id, {
+                ...drawingCliked,
+                x: clientX - drawingCliked.objectWidth/2,
+                y: clientY - drawingCliked.objectHeight/2,
+                clicked: false
             });
-        }
-    }
+        };
+    };
 
     const contextValue = {
         createRectangle: createRectangle,
@@ -96,11 +94,10 @@ const Canvas = () => {
     };
     return (
         <CanvasContext.Provider value={contextValue}>
-            <section>
-                <CanvasToolbar/>
-                <div className='canvas-containor'>
-                    <canvas onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} className='my-canvas' ref={canvasRef} height={canvasHeight} width={canvasWidth} />
-                </div>
+            <section className="workspace">
+                <SideBar/>
+                <BottomBar/>
+                <canvas onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} className='my-canvas' ref={canvasRef} height={canvasHeight} width={canvasWidth} />
             </section>
         </CanvasContext.Provider>
     );

@@ -2,7 +2,7 @@ import Canvas from './canvas/Canvas';
 
 function Home() {
     return (
-        <div>
+        <div className='home'>
             <Canvas/>
         </div>
     )

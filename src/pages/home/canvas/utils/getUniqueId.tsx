@@ -2,7 +2,7 @@ type Id = string;
 
 const getUniqueId = () => {
 
-  const generateRandomId = (): string => {
+  function generateRandomId(): string {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
     const idLength = 20;
     let randomId = '';
