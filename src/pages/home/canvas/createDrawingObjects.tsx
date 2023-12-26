@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import getUniqueId from './utils/getUniqueId';
 import { createBitmap } from './utils/createBitmap';
+import { drawRectangle } from './drawings';
 import { 
   shapeType,
   CanvasObject,
@@ -15,27 +16,45 @@ import {
 
 
 
-const initializeObject = (name? : string, type? : shapeType, width?: number, height?: number, x?: number, y?: number, draggable? : boolean) : CanvasObject => {
-  const defaultType: shapeType = 'None';
+function initializeObject (
+  name : string = 'new object',
+  type: shapeType = 'None',
+  width: number = 100,
+  height: number = 100, 
+  x: number = 0, 
+  y: number = 0, 
+  draggable : boolean = false) : CanvasObject {
+
   return {
-    name: name?? 'new object',
-    type: type?? defaultType,
+    name: name,
+    type: type,
     id: getUniqueId(),
-    x: x?? 0,
-    y: y?? 0,
-    objectWidth: width?? 100,
-    objectHeight: height?? 100,
-    draggable: draggable || false,
+    x: x,
+    y: y,
+    objectWidth: width,
+    objectHeight: height,
+    draggable: draggable,
     clicked: false,
     focused: false,
     hovered: false,
-    imageBitmap: undefined,
+    createImageBitmap: function () : Promise<ImageBitmap> {
+      return new Promise((resolve, reject) => {
+        const canvas = new OffscreenCanvas(this.objectWidth, this.objectHeight);
+        createBitmap(canvas)
+        .then((imageBitmap) => {
+          resolve(imageBitmap);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+      });
+    },
   };
 };
 
 export async function createRectangle(width: number, height: number, color?: 'string') : Promise<Rectangle> {
-  const canvasWidth = width * 1.4;
-  const canvasHeight = height * 1.4;
+  const canvasWidth = width;
+  const canvasHeight = height;
   const canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
   const ctx = canvas.getContext('2d');
 
@@ -43,19 +62,32 @@ export async function createRectangle(width: number, height: number, color?: 'st
   const fillColor : string = color?? '#000000';
   
   if(ctx) {
-    ctx.fillStyle = fillColor;
-    ctx.fillRect(canvasWidth / 2 - width / 2, canvasHeight / 2 - height / 2, width, height);
     const imageBitmap = await createBitmap(canvas);
     console.log(imageBitmap);
   
     let rectangleObj = {
-      ...initializeObject('rectangle', type, width, height, 0, 0),
+      ...initializeObject('rectangle', type, canvasWidth, canvasHeight, 0, 0),
        fillColor: fillColor,
        width: width,
        height: height,
-       imageBitmap: imageBitmap,
        objectWidth: canvasWidth,
        objectHeight: canvasHeight,
+       createImageBitmap: function () : Promise<ImageBitmap> {
+        return new Promise((resolve, reject) => {
+          const canvas = new OffscreenCanvas(this.objectWidth, this.objectHeight);
+          const ctx = canvas.getContext('2d');
+          createBitmap(canvas)
+          .then((imageBitmap) => {
+            if(ctx) {
+              drawRectangle(ctx, this.x, this.y, this.width, this.height, this.color);
+            }
+            resolve(imageBitmap);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+        });
+      },
     };
     return rectangleObj;
   }else {

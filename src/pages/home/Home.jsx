@@ -1,5 +1,5 @@
 import Canvas from './canvas/Canvas.jsx';
-import './canvas/Canvas.css';
+import '../../App.css';
 
 function Home() {
     return (

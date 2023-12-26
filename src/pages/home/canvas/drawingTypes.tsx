@@ -13,7 +13,7 @@ export interface CanvasObject {
     draggable: boolean;
     focused: boolean;
     hovered: boolean;
-    imageBitmap: any;
+    createImageBitmap: () => Promise<ImageBitmap>;
 }
 
 export interface Rectangle extends CanvasObject{

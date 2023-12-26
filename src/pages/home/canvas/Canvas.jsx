@@ -4,7 +4,7 @@ import BottomBar from './BottomBar';
 import CanvasContext from './CanvasContext'
 import useDrawingObjArray from './hooks/useDrawing';
 import { createRectangle } from './createDrawingObjects';
-import { drawFocusOutline } from "./drawFocusOutline";
+import { drawFocusOutline } from "./drawings";
 import useWindowDimensions from "./hooks/useWindowDimensions";
 import './Canvas.css';
 
@@ -22,7 +22,9 @@ const Canvas = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawingObjs.forEach(drawing => {
             if (drawing.focused) drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth, drawing.objectHeight);
-            ctx.drawImage(drawing.imageBitmap, drawing.x, drawing.y);
+            const imageBitmap = drawing.createImageBitmap()
+            .then(imageBitmap => ctx.drawImage(imageBitmap, drawing.x, drawing.y))
+            .catch(error => {throw new Error(error)});
     }   );
     },[drawingObjs]);
 
