@@ -12,18 +12,24 @@ const Canvas = () => {
     const { drawingObjs, addDrawing, removeDrawing, updateDrawing } = useDrawingObjArray();
     const windowDimensions = useWindowDimensions();
 
+    const canvasHeight = windowDimensions.height;
+    const canvasWidth = windowDimensions.width;
+
     const mainCanvasRef = useRef();
     const drawingCanvasRef = useRef();
 
 
     useEffect(()=> {
+
         const canvas = mainCanvasRef.current;
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawingObjs.forEach(drawing => {
             if (drawing.focused) drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth, drawing.objectHeight);
-            const imageBitmap = drawing.createImageBitmap()
-            .then(imageBitmap => ctx.drawImage(imageBitmap, drawing.x, drawing.y))
+            drawing.createImageBitmap()
+            .then(imageBitmap => {
+                ctx.drawImage(imageBitmap, drawing.x, drawing.y);
+            })
             .catch(error => {throw new Error(error)});
     }   );
     },[drawingObjs]);
@@ -40,6 +46,7 @@ const Canvas = () => {
     }
 
     function handleMouseDown(e) {
+        console.log('canvas')
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
@@ -101,8 +108,7 @@ const Canvas = () => {
             <section className="workspace">
                 <div className="containor">
                     <SideBar/>
-                    <canvas onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} className='main-canvas' ref={mainCanvasRef} height={windowDimensions.height} width={windowDimensions.width} />
-                    <canvas ref={drawingCanvasRef} className="drawing-canvas"/>
+                    <canvas onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} className='main-canvas' ref={mainCanvasRef} height={canvasHeight} width={canvasWidth} />
                 </div>
                 <BottomBar/>
             </section>

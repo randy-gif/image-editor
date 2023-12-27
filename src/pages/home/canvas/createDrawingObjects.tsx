@@ -35,7 +35,7 @@ function initializeObject (
     objectHeight: height,
     draggable: draggable,
     clicked: false,
-    focused: false,
+    focused: true,
     hovered: false,
     createImageBitmap: function () : Promise<ImageBitmap> {
       return new Promise((resolve, reject) => {
@@ -52,35 +52,32 @@ function initializeObject (
   };
 };
 
-export async function createRectangle(width: number, height: number, color?: 'string') : Promise<Rectangle> {
+export async function createRectangle(width: number, height: number, color?: string) : Promise<Rectangle> {
   const canvasWidth = width;
   const canvasHeight = height;
   const canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
   const ctx = canvas.getContext('2d');
 
   const type: shapeType = 'Rectangle';
-  const fillColor : string = color?? '#000000';
+  const fillColor : string = color?? 'white';
   
   if(ctx) {
-    const imageBitmap = await createBitmap(canvas);
-    console.log(imageBitmap);
-  
     let rectangleObj = {
       ...initializeObject('rectangle', type, canvasWidth, canvasHeight, 0, 0),
-       fillColor: fillColor,
-       width: width,
-       height: height,
-       objectWidth: canvasWidth,
-       objectHeight: canvasHeight,
-       createImageBitmap: function () : Promise<ImageBitmap> {
+      fillColor: fillColor,
+      width: width,
+      height: height,
+      objectWidth: canvasWidth,
+      objectHeight: canvasHeight,
+      createImageBitmap: function () : Promise<ImageBitmap> {
         return new Promise((resolve, reject) => {
           const canvas = new OffscreenCanvas(this.objectWidth, this.objectHeight);
           const ctx = canvas.getContext('2d');
+          if(ctx) {
+            drawRectangle(ctx, 0, 0, this.width, this.height, this.fillColor);
+          }
           createBitmap(canvas)
           .then((imageBitmap) => {
-            if(ctx) {
-              drawRectangle(ctx, this.x, this.y, this.width, this.height, this.color);
-            }
             resolve(imageBitmap);
           })
           .catch((error) => {

@@ -3,20 +3,19 @@ import { IoMove } from "react-icons/io5";
 import useActive from "../../hooks/useActive";
 import {DrawingObject} from '../../drawingTypes';
 import styled, { ThemeProvider } from 'styled-components';
-import { lightTheme, darkTheme, Theme } from '../../../themes';
+import { lightTheme, darkTheme, Theme } from '../../../theme';
 
-const styledDiv = styled.div`
+const styledDiv = styled.div<{theme: Theme}>`
     background-color: ${props => props.theme.backgroundColor};
+    color: ${props => props.theme.textColor};
+    
 `;
 
 
 
-const Adjust = (props: DrawingObject) => {
+const Adjust = () => {
     const {active, toggleActive} = useActive();
-    const {name, type} = props
-    useEffect(() => {
-        console.log(active);
-    });
+
     return(
         <div>
             <div className="icon">
@@ -24,10 +23,10 @@ const Adjust = (props: DrawingObject) => {
             </div>
             <section className={`tooldrawer ${active? 'active' : ''}`}>
                 <div>
-                    <h2>{type?? 'Text'}</h2>
+                    <h2>{'Text'}</h2>
                     <div className='tooldrawer-containor'>
                         <label>Name
-                            <input type='text' value={type?? 'Text'}></input>
+                            <input type='text'></input>
                         </label>
                         <label>Opacity
                             <input type="range"></input>
