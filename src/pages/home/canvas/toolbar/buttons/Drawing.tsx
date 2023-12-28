@@ -22,6 +22,8 @@ const Drawing = () => {
     const createRectBtn = () => {
         createRectangle( 250, 100, 'white')
         .then((rectangle)=> {
+            rectangle.x = 625;
+            rectangle.y = 200;
             addDrawing(rectangle);
         })
         .catch((err)=> {

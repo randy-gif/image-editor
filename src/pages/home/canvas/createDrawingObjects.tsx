@@ -35,7 +35,7 @@ function initializeObject (
     objectHeight: height,
     draggable: draggable,
     clicked: false,
-    focused: true,
+    focused: false,
     hovered: false,
     createImageBitmap: function () : Promise<ImageBitmap> {
       return new Promise((resolve, reject) => {
