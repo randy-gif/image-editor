@@ -20,12 +20,15 @@ const Canvas = () => {
 
 
     useEffect(()=> {
-
         const canvas = mainCanvasRef.current;
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        console.log('useEffect', drawingObjs);
         drawingObjs.forEach(drawing => {
-            if (drawing.focused) drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth, drawing.objectHeight);
+            if (drawing.focused) {
+                drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth, drawing.objectHeight);
+            }
             drawing.createImageBitmap()
             .then(imageBitmap => {
                 ctx.drawImage(imageBitmap, drawing.x, drawing.y);
@@ -46,39 +49,36 @@ const Canvas = () => {
     }
 
     function handleMouseDown(e) {
-        console.log('canvas')
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
-        const drawingCliked = drawingObjs.reverse().find(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.objectWidth && clientY >= drawing.y && clientY <= drawing.y + drawing.objectHeight))
-        if (drawingCliked) {
-            updateDrawing( drawingCliked.id, {
-                ...drawingCliked,
-                clicked: true,
-                focused: true,
-            });
+        const drawingClicked = drawingObjs.find(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.objectWidth && clientY >= drawing.y && clientY <= drawing.y + drawing.objectHeight))
+        if (drawingClicked) {   
             drawingObjs.forEach(drawing => {
-                if(drawingCliked.id !== drawing.id) {
-                    console.log(drawingCliked.id, drawing.id, 'not same');
+                if(drawing.id !== drawingClicked.id) {
                     updateDrawing(drawing.id, {
                         ...drawing,
                         clicked: false,
                         focused: false,
-                    })
+                    });
                 }else {
-                    console.log(drawingCliked.id, drawing.id, 'same');
+                    updateDrawing( drawingClicked.id, {
+                        ...drawingClicked,
+                        clicked: true,
+                        focused: true,
+                    }); 
                 }
-            });
-        }else if(!drawingCliked) {
-            console.log('no drawing clicked');
+            });             
+        }else if(!drawingClicked) {
             drawingObjs.forEach(drawing => {
                 updateDrawing(drawing.id, {
-                    ...drawing,
+                  ...drawing,
                     clicked: false,
                     focused: false,
-                })
+                });
             });
         }
+
   
     }
 
