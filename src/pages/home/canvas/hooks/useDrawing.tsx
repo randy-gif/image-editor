@@ -1,13 +1,21 @@
 import { useState, useEffect } from 'react';
-import { DrawingObject } from '../drawingTypes';
+import Rectangle from '../classes/RectangleClass';
+
+type DrawingObject = Rectangle ;
 
 function useDrawingObjArray() {
 const [drawingObjs, setDrawingObjs] = useState<DrawingObject[]>([]);
 const addDrawing = (obj: DrawingObject) => {
-    setDrawingObjs([...drawingObjs, obj]);
+    setDrawingObjs(prevDrawingObjs => [...prevDrawingObjs, obj]);
 };
 const removeDrawing = (id: string) => {
-    setDrawingObjs(drawingObjs.filter((obj) => obj.id!== id));
+    setDrawingObjs(prevDrawingObjs => {
+        if(prevDrawingObjs.some(drawingObj => drawingObj.id === id)) {
+            return prevDrawingObjs.filter((obj) => obj.id!== id);
+        } else {
+            throw new Error('No such drawing object');
+        }
+    });
 };
 
 const updateDrawing = (id: string, obj: DrawingObject) => {
@@ -26,7 +34,6 @@ const updateDrawing = (id: string, obj: DrawingObject) => {
     });
 };
 
-console.log('drawingObjs from useDrawing', drawingObjs);
 return { drawingObjs, addDrawing, removeDrawing, updateDrawing };
 }
 

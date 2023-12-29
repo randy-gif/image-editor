@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import { BiPaint } from "react-icons/bi";
-import {DrawingObject} from '../../drawingTypes';
 import styled, { ThemeProvider } from 'styled-components';
 import { lightTheme, darkTheme, Theme } from '../../../theme';
-import useDrawingObjArray from "../../hooks/useDrawing" 
-import { createRectangle } from '../../createDrawingObjects'
 import CanvasContext from "../../CanvasContext";
+import Rectangle from '../../classes/RectangleClass.ts';
+import createBitmap from '../../utils/createBitmap.tsx';
 
 const styledDiv = styled.div<{theme: Theme}>`
     background-color: ${props => props.theme.backgroundColor};
@@ -17,18 +16,18 @@ const styledDiv = styled.div<{theme: Theme}>`
 
 const Drawing = () => {
     const [active, setActive] = useState<boolean>(false);
-    const {removeDrawing, addDrawing} = useContext(CanvasContext);
+    const {addDrawing} = useContext(CanvasContext);
+
     const toggleActive = () => setActive((prevActive)=>!prevActive);
+
     const createRectBtn = () => {
-        createRectangle( 250, 100, 'white')
-        .then((rectangle)=> {
-            rectangle.x = 625;
-            rectangle.y = 200;
-            addDrawing(rectangle);
-        })
-        .catch((err)=> {
-            throw new Error(err);
-        })
+        const rect = new Rectangle(625, 200, 100, 60, 'white');
+        rect.drawOnCanvas();
+        createBitmap(rect.canvas)
+        .then((imageBitmap) => {
+            rect.imageBitmap = imageBitmap;
+            addDrawing(rect);
+        });
     }
     return(
         <div>

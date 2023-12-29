@@ -1,4 +1,4 @@
-export async function createBitmap(canvas: OffscreenCanvas) : Promise<ImageBitmap> {
+export default async function createBitmap(canvas: OffscreenCanvas) : Promise<ImageBitmap> {
     return new Promise((resolve, reject) => {
       canvas.convertToBlob()
       .then((blob) => {

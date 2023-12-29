@@ -3,7 +3,6 @@ import SideBar from './toolbar/SideBar';
 import BottomBar from './BottomBar';
 import CanvasContext from './CanvasContext'
 import useDrawingObjArray from './hooks/useDrawing';
-import { createRectangle } from './createDrawingObjects';
 import { drawFocusOutline } from "./drawings";
 import useWindowDimensions from "./hooks/useWindowDimensions";
 import './Canvas.css';
@@ -16,7 +15,6 @@ const Canvas = () => {
     const canvasWidth = windowDimensions.width;
 
     const mainCanvasRef = useRef();
-    const drawingCanvasRef = useRef();
 
 
     useEffect(()=> {
@@ -24,16 +22,11 @@ const Canvas = () => {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        console.log('useEffect', drawingObjs);
         drawingObjs.forEach(drawing => {
             if (drawing.focused) {
                 drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth, drawing.objectHeight);
             }
-            drawing.createImageBitmap()
-            .then(imageBitmap => {
-                ctx.drawImage(imageBitmap, drawing.x, drawing.y);
-            })
-            .catch(error => {throw new Error(error)});
+            ctx.drawImage(drawing.imageBitmap, drawing.x, drawing.y);
     }   );
     },[drawingObjs]);
 
@@ -56,26 +49,20 @@ const Canvas = () => {
         if (drawingClicked) {   
             drawingObjs.forEach(drawing => {
                 if(drawing.id !== drawingClicked.id) {
-                    updateDrawing(drawing.id, {
-                        ...drawing,
-                        clicked: false,
-                        focused: false,
-                    });
+                    drawing.clicked = false;
+                    drawing.focused = false;
+                    updateDrawing(drawing.id, drawing);
                 }else {
-                    updateDrawing( drawingClicked.id, {
-                        ...drawingClicked,
-                        clicked: true,
-                        focused: true,
-                    }); 
+                    drawing.clicked = true;
+                    drawing.focused = true;
+                    updateDrawing( drawingClicked.id, drawing); 
                 }
             });             
         }else if(!drawingClicked) {
             drawingObjs.forEach(drawing => {
-                updateDrawing(drawing.id, {
-                  ...drawing,
-                    clicked: false,
-                    focused: false,
-                });
+                drawing.focused = false;
+                drawing.clicked = false;
+                updateDrawing(drawing.id, drawing);
             });
         }
 
@@ -86,19 +73,16 @@ const Canvas = () => {
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
-        const drawingCliked = drawingObjs.find(drawing => drawing.clicked)
-        if (drawingCliked) {
-            updateDrawing(drawingCliked.id, {
-                ...drawingCliked,
-                x: clientX - drawingCliked.objectWidth/2,
-                y: clientY - drawingCliked.objectHeight/2,
-                clicked: false
-            });
+        const drawingClicked = drawingObjs.find(drawing => drawing.clicked)
+        if (drawingClicked) {
+            drawingClicked.clicked = false;
+            drawingClicked.x = clientX - drawingClicked.objectWidth / 2;
+            drawingClicked.y = clientY - drawingClicked.objectHeight / 2;
+            updateDrawing(drawingClicked.id, drawingClicked);
         };
     };
 
     const contextValue = {
-        createRectangle: createRectangle,
         addDrawing: addDrawing,
         removeDrawing: removeDrawing,
         updateDrawing: updateDrawing
