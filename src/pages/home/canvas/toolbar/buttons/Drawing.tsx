@@ -18,9 +18,9 @@ const Drawing = () => {
     const [active, setActive] = useState<boolean>(false);
     const {addDrawing} = useContext(CanvasContext);
 
-    const toggleActive = () => setActive((prevActive)=>!prevActive);
+    const toggleActive = () : void => setActive((prevActive)=>!prevActive);
 
-    const createRectBtn = () => {
+    const createRectBtn = () : void => {
         const rect = new Rectangle(625, 200, 100, 60, 'white');
         rect.drawOnCanvas();
         createBitmap(rect.canvas)

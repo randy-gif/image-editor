@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import Rectangle from '../classes/RectangleClass';
+import CanvasImg from '../classes/ImageClass';
 
-type DrawingObject = Rectangle ;
+type DrawingObject = Rectangle | CanvasImg; ;
 
 function useDrawingObjArray() {
 const [drawingObjs, setDrawingObjs] = useState<DrawingObject[]>([]);

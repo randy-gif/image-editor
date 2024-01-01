@@ -13,6 +13,8 @@ export default class CanvasObject {
     _hovered: boolean;
     _canvas: OffscreenCanvas;
     _imageBitmap: ImageBitmap;
+    _scaleX: number;
+    _scaleY: number;
 
     constructor(name: string, x: number, y: number, objectWidth: number, objectHeight: number) {
         this._name = name;
@@ -25,6 +27,8 @@ export default class CanvasObject {
         this._draggable = false;
         this._focused = false;
         this._hovered = false;
+        this._scaleX = 1;
+        this._scaleY = 1;
         this._canvas = new OffscreenCanvas(this.objectWidth, this.objectHeight);
     }
 

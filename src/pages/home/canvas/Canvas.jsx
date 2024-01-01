@@ -23,12 +23,40 @@ const Canvas = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawingObjs.forEach(drawing => {
+            if(drawing.imageBitmap.width > canvas.width || drawing.imageBitmap.height > canvas.height) {
+                const scaleX = canvas.width / drawing.imageBitmap.width;
+                const scaleY = canvas.height / drawing.imageBitmap.height;
+                const scale = Math.min(scaleX, scaleY);
+
+                if(scaleX < scaleY) {
+                    if(drawing.objectWidth !== canvas.width) {
+                        drawing.objectWidth *= scale;
+                        drawing.objectHeight *= scale;
+                        updateDrawing(drawing.id, drawing);
+                    }
+                }else {
+                    if(drawing.objectHeight !== canvas.height) {
+                        drawing.objectWidth *= scale;
+                        drawing.objectHeight *= scale;
+                        updateDrawing(drawing.id, drawing);
+                    }                    
+                }
+
+                ctx.save();
+                ctx.scale(scale, scale);
+                ctx.drawImage(drawing.imageBitmap, drawing.x / scale, drawing.y / scale);
+                ctx.restore();
+
+            }else {
+                ctx.drawImage(drawing.imageBitmap, drawing.x, drawing.y );
+            }
             if (drawing.focused) {
                 drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth, drawing.objectHeight);
             }
-            ctx.drawImage(drawing.imageBitmap, drawing.x, drawing.y);
     }   );
     },[drawingObjs]);
+
+    console.log(drawingObjs);
 
     const getCanvasPosition = () => {
         const canvas = mainCanvasRef.current;
@@ -45,17 +73,17 @@ const Canvas = () => {
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
-        const drawingClicked = drawingObjs.find(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.objectWidth && clientY >= drawing.y && clientY <= drawing.y + drawing.objectHeight))
+        const drawingClicked = [...drawingObjs].reverse().find(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.objectWidth && clientY >= drawing.y && clientY <= drawing.y + drawing.objectHeight))
         if (drawingClicked) {   
             drawingObjs.forEach(drawing => {
-                if(drawing.id !== drawingClicked.id) {
-                    drawing.clicked = false;
-                    drawing.focused = false;
-                    updateDrawing(drawing.id, drawing);
-                }else {
+                if(drawing.id === drawingClicked.id) {
                     drawing.clicked = true;
                     drawing.focused = true;
                     updateDrawing( drawingClicked.id, drawing); 
+                }else {
+                    drawing.clicked = false;
+                    drawing.focused = false;
+                    updateDrawing(drawing.id, drawing);
                 }
             });             
         }else if(!drawingClicked) {
@@ -73,7 +101,7 @@ const Canvas = () => {
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
-        const drawingClicked = drawingObjs.find(drawing => drawing.clicked)
+        const drawingClicked = [...drawingObjs].reverse().find(drawing => drawing.clicked);
         if (drawingClicked) {
             drawingClicked.clicked = false;
             drawingClicked.x = clientX - drawingClicked.objectWidth / 2;

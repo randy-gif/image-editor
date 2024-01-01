@@ -3,7 +3,8 @@ import { IoMove, IoCrop, IoCut, IoColorFilterOutline, IoImageSharp  } from "reac
 import { TbAdjustmentsHorizontal, TbTools, TbSpiral} from "react-icons/tb";
 import { BiAdjust, BiBandAid, BiPaint, BiText } from "react-icons/bi";
 import Adjust from './buttons/Adjust';
-import Drawing from './buttons/Drawing'
+import Drawing from './buttons/Drawing';
+import Element from './buttons/Element';
 
 
 function SideBar() {
@@ -20,7 +21,7 @@ function SideBar() {
             <li className='sidebar-li'><BiBandAid size={30} /></li>
             <Drawing/>
             <li className='sidebar-li'><BiText size={30}/></li>
-            <li className='sidebar-li'><IoImageSharp size={30} /></li>
+            <Element/>
         </div>
     );
 };
