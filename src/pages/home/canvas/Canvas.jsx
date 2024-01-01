@@ -5,6 +5,7 @@ import CanvasContext from './CanvasContext'
 import useDrawingObjArray from './hooks/useDrawing';
 import { drawFocusOutline } from "./drawings";
 import useWindowDimensions from "./hooks/useWindowDimensions";
+import useMouseMove from './hooks/useMouseMove';
 import './Canvas.css';
 
 const Canvas = () => {
@@ -15,6 +16,7 @@ const Canvas = () => {
     const canvasWidth = windowDimensions.width;
 
     const mainCanvasRef = useRef();
+    const mousePosition = useMouseMove(mainCanvasRef);
 
 
     useEffect(()=> {
@@ -56,7 +58,6 @@ const Canvas = () => {
     }   );
     },[drawingObjs]);
 
-    console.log(drawingObjs);
 
     const getCanvasPosition = () => {
         const canvas = mainCanvasRef.current;
@@ -68,6 +69,18 @@ const Canvas = () => {
             height: canvasPosition.height
         }
     }
+
+    useEffect(() => {
+        const canvasPosition = getCanvasPosition();
+        const drawingClicked = drawingObjs.find(drawing => drawing.clicked)
+        const clientX = mousePosition.x - canvasPosition.x;
+        const clientY = mousePosition.y - canvasPosition.y;
+        if(drawingClicked) {
+            drawingClicked.x = clientX - drawingClicked.objectWidth / 2;
+            drawingClicked.y = clientY - drawingClicked.objectHeight / 2;
+            updateDrawing(drawingClicked.id ,drawingClicked);
+        }
+    }, [mousePosition]);
 
     function handleMouseDown(e) {
         const canvasPosition = getCanvasPosition();

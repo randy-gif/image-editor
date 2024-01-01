@@ -8,12 +8,13 @@ interface MousePosition {
 function useMoseMove(ref: RefObject<HTMLElement>): MousePosition {
   const [mousePosition, setMousePosition] = useState<MousePosition>({ x: null, y: null });
 
-  const handleMouseMove = (event: MouseEvent) => {
+  const handleMouseMove =(event: MouseEvent) => {
     setMousePosition({
       x: event.clientX,
       y: event.clientY
     });
   };
+
 
   useEffect(() => {
     const element = ref.current;
