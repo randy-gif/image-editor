@@ -1,4 +1,5 @@
 import { useState, useEffect, RefObject } from 'react';
+import { throttle } from 'lodash';
 
 interface MousePosition {
   x: number | null;
@@ -14,15 +15,16 @@ function useMoseMove(ref: RefObject<HTMLElement>): MousePosition {
       y: event.clientY
     });
   };
-
+  const throttledMouseMove = throttle(handleMouseMove, 100);
 
   useEffect(() => {
     const element = ref.current;
     if (element) {
-      element.addEventListener('mousemove', handleMouseMove);
+      element.addEventListener('mousemove', throttledMouseMove);
 
       return () => {
-        element.removeEventListener('mousemove', handleMouseMove);
+        throttledMouseMove.cancel();
+        element.removeEventListener('mousemove', throttledMouseMove);
       };
     }
   }, [ref]);

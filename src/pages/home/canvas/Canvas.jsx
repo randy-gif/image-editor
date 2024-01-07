@@ -6,6 +6,7 @@ import useDrawingObjArray from './hooks/useDrawing';
 import { drawFocusOutline } from "./drawings";
 import useWindowDimensions from "./hooks/useWindowDimensions";
 import useMouseMove from './hooks/useMouseMove';
+// import DragAndDrop from "./hooks/DragAndDrop";
 import './Canvas.css';
 
 const Canvas = () => {
@@ -17,6 +18,8 @@ const Canvas = () => {
 
     const mainCanvasRef = useRef();
     const mousePosition = useMouseMove(mainCanvasRef);
+   
+    // DragAndDrop(mainCanvasRef, drawingObjs, updateDrawing)
 
 
     useEffect(()=> {
@@ -25,21 +28,24 @@ const Canvas = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawingObjs.forEach(drawing => {
+            console.log(drawing.imageBitmap.width);
             if(drawing.imageBitmap.width > canvas.width || drawing.imageBitmap.height > canvas.height) {
                 const scaleX = canvas.width / drawing.imageBitmap.width;
                 const scaleY = canvas.height / drawing.imageBitmap.height;
                 const scale = Math.min(scaleX, scaleY);
 
                 if(scaleX < scaleY) {
+                    console.log('object width: ' + drawing.objectWidth + ' canvas width: ' + canvas.width);
                     if(drawing.objectWidth !== canvas.width) {
-                        drawing.objectWidth *= scale;
-                        drawing.objectHeight *= scale;
+                        drawing.objectWidth = Math.trunc(drawing.objectWidth * scale);
+                        drawing.objectHeight = Math.trunc(drawing.objectHeight * scale);
                         updateDrawing(drawing.id, drawing);
                     }
                 }else {
+                    console.log('object Height: ' + drawing.objectHeight + ' canvas height: ' + canvas.height);
                     if(drawing.objectHeight !== canvas.height) {
-                        drawing.objectWidth *= scale;
-                        drawing.objectHeight *= scale;
+                        drawing.objectWidth = Math.ceil(drawing.objectWidth * scale);
+                        drawing.objectHeight = Math.ceil(drawing.objectHeight * scale);
                         updateDrawing(drawing.id, drawing);
                     }                    
                 }
@@ -133,7 +139,7 @@ const Canvas = () => {
             <section className="workspace">
                 <div className="containor">
                     <SideBar/>
-                    <canvas onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} className='main-canvas' ref={mainCanvasRef} height={canvasHeight} width={canvasWidth} />
+                    <canvas onMouseUp={handleMouseUp} onMouseDown={handleMouseDown}  className='main-canvas' ref={mainCanvasRef} height={canvasHeight} width={canvasWidth} />
                 </div>
                 <BottomBar/>
             </section>
