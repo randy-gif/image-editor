@@ -27,11 +27,11 @@ const Canvas = () => {
             if(drawing.imageBitmap.height > canvas.height) {
                 const scale = canvas.height / drawing.imageBitmap.height;
 
-                if(drawing.objectHeight !== canvas.height) {
-                    drawing.objectWidth = Math.ceil(drawing.objectWidth * scale);
-                    drawing.objectHeight = Math.ceil(drawing.objectHeight * scale);
-                    updateDrawing(drawing.id, drawing);
-                }     
+                if(drawing.scaleX !== scale && drawing.scaleY !== scale) {
+                    drawing.scaleX = scale;
+                    drawing.scaleY = scale;
+                    updateDrawing(drawing)
+                }
 
                 ctx.save();
                 ctx.scale(scale, scale);
@@ -42,13 +42,11 @@ const Canvas = () => {
                 ctx.drawImage(drawing.imageBitmap, drawing.x, drawing.y );
             }
             if (drawing.focused) {
-                console.log('it is working');
-                drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth, drawing.objectHeight);
+                drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth * drawing.scaleX, drawing.objectHeight * drawing.scaleY);
             }
+
     }   );
     },[drawingObjs]);
-
-    console.log(drawingObjs);
 
     const getCanvasPosition = () => {
         const canvas = mainCanvasRef.current;
@@ -67,9 +65,9 @@ const Canvas = () => {
         const clientX = mousePosition.x - canvasPosition.x;
         const clientY = mousePosition.y - canvasPosition.y;
         if(drawingClicked) {
-            drawingClicked.x = clientX - drawingClicked.objectWidth / 2;
-            drawingClicked.y = clientY - drawingClicked.objectHeight / 2;
-            updateDrawing(drawingClicked.id ,drawingClicked);
+            drawingClicked.x = clientX - drawingClicked.objectWidth * drawingClicked.scaleX/ 2;
+            drawingClicked.y = clientY - drawingClicked.objectHeight * drawingClicked.scaleY/ 2;
+            updateDrawing(drawingClicked);
         }
     }, [mousePosition]);
 
@@ -77,24 +75,51 @@ const Canvas = () => {
         const canvasPosition = getCanvasPosition();
         const clientX = e.clientX - canvasPosition.x;
         const clientY = e.clientY - canvasPosition.y;
-        const drawingClicked = [...drawingObjs].reverse().find(drawing => (clientX >= drawing.x && clientX <= drawing.x + drawing.objectWidth && clientY >= drawing.y && clientY <= drawing.y + drawing.objectHeight))
+        const drawingClicked = [...drawingObjs].reverse().find(drawing => {
+            const pass = new Array();
+
+            if(clientX >= drawing.x) {
+                pass.push(true);
+            } else {
+                pass.push(false);
+            }
+            if(clientX <= (drawing.x + (drawing.objectWidth * drawing.scaleX))){
+                pass.push(true);
+            } else {
+                pass.push(false);
+            }
+            if(clientY >= drawing.y) {
+                pass.push(true);
+            } else {
+                pass.push(false);
+            }
+            if(clientY <= (drawing.y + (drawing.objectHeight * drawing.scaleY))) {
+                pass.push(true);
+            } else {
+                pass.push(false);
+            }
+            console.log(pass);
+            if(pass.every(pass => pass === true)) {
+                return drawing;
+            }
+        });
         if (drawingClicked) {   
             drawingObjs.forEach(drawing => {
                 if(drawing.id === drawingClicked.id) {
                     drawing.clicked = true;
                     drawing.focused = true;
-                    updateDrawing( drawingClicked.id, drawing); 
+                    updateDrawing(drawing); 
                 }else {
                     drawing.clicked = false;
                     drawing.focused = false;
-                    updateDrawing(drawing.id, drawing);
+                    updateDrawing(drawing);
                 }
             });             
         }else if(!drawingClicked) {
             drawingObjs.forEach(drawing => {
                 drawing.focused = false;
                 drawing.clicked = false;
-                updateDrawing(drawing.id, drawing);
+                updateDrawing(drawing);
             });
         }
 
@@ -108,9 +133,9 @@ const Canvas = () => {
         const drawingClicked = [...drawingObjs].reverse().find(drawing => drawing.clicked);
         if (drawingClicked) {
             drawingClicked.clicked = false;
-            drawingClicked.x = clientX - drawingClicked.objectWidth / 2;
-            drawingClicked.y = clientY - drawingClicked.objectHeight / 2;
-            updateDrawing(drawingClicked.id, drawingClicked);
+            drawingClicked.x = clientX - drawingClicked.objectWidth * drawingClicked.scaleX / 2;
+            drawingClicked.y = clientY - drawingClicked.objectHeight * drawingClicked.scaleY / 2;
+            updateDrawing(drawingClicked);
         };
     };
 

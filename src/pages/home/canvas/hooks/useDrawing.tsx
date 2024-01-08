@@ -6,9 +6,11 @@ type DrawingObject = Rectangle | CanvasImg; ;
 
 function useDrawingObjArray() {
 const [drawingObjs, setDrawingObjs] = useState<DrawingObject[]>([]);
+
 const addDrawing = (obj: DrawingObject) => {
     setDrawingObjs(prevDrawingObjs => [...prevDrawingObjs, obj]);
 };
+
 const removeDrawing = (id: string) => {
     setDrawingObjs(prevDrawingObjs => {
         if(prevDrawingObjs.some(drawingObj => drawingObj.id === id)) {
@@ -19,11 +21,11 @@ const removeDrawing = (id: string) => {
     });
 };
 
-const updateDrawing = (id: string, obj: DrawingObject) => {
+const updateDrawing = (obj: DrawingObject) => {
     setDrawingObjs(prevDrawingObjs => {
-        if (prevDrawingObjs.some((drawingObj) => drawingObj.id === id)) {
+        if (prevDrawingObjs.some((drawingObj) => drawingObj.id === obj.id)) {
             return prevDrawingObjs.map((drawingObj) => {
-                if (drawingObj.id === id) {
+                if (drawingObj.id === obj.id) {
                     return obj;
                 } else {
                     return drawingObj;

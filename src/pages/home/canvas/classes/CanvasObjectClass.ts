@@ -98,5 +98,17 @@ export default class CanvasObject {
     get imageBitmap(): ImageBitmap {
         return this._imageBitmap;
     }
+    get scaleX(): number {
+        return this._scaleX;
+    }
+    set scaleX(scaleX: number) {
+        this._scaleX = scaleX;
+    }
+    get scaleY(): number {
+        return this._scaleY;
+    }
+    set scaleY(scaleY: number) {
+        this._scaleY = scaleY;
+    }
     
 }

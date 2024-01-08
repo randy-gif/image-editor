@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { IoImageSharp  } from "react-icons/io5";
 import CanvasContext from "../../CanvasContext";
-import Rectangle from '../../classes/RectangleClass.ts';
-import createBitmap from '../../utils/createBitmap.tsx';
-import CanvasImg from '../../classes/ImageClass.ts';
+import Rectangle from '../../classes/RectangleClass';
+import createBitmap from '../../utils/createBitmap';
+import CanvasImg from '../../classes/ImageClass';
 
 
 
