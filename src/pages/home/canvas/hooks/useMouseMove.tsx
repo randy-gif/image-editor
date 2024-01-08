@@ -15,7 +15,7 @@ function useMoseMove(ref: RefObject<HTMLElement>): MousePosition {
       y: event.clientY
     });
   };
-  const throttledMouseMove = throttle(handleMouseMove, 100);
+  const throttledMouseMove = throttle(handleMouseMove, 50);
 
   useEffect(() => {
     const element = ref.current;

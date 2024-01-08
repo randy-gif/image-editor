@@ -16,7 +16,7 @@ export default class CanvasImg extends CanvasObject {
                 this._imageBitmap = imageBitmap;
                 this._canvas.width = this._imageBitmap.width;
                 this._canvas.height = this._imageBitmap.height;
-                const ctx = this._canvas.getContext('2d');
+                const ctx = this._canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
                 if(ctx) {
                     ctx.drawImage(this._imageBitmap, 0, 0);
                 }

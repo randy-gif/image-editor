@@ -6,7 +6,6 @@ import useDrawingObjArray from './hooks/useDrawing';
 import { drawFocusOutline } from "./drawings";
 import useWindowDimensions from "./hooks/useWindowDimensions";
 import useMouseMove from './hooks/useMouseMove';
-// import DragAndDrop from "./hooks/DragAndDrop";
 import './Canvas.css';
 
 const Canvas = () => {
@@ -18,9 +17,6 @@ const Canvas = () => {
 
     const mainCanvasRef = useRef();
     const mousePosition = useMouseMove(mainCanvasRef);
-   
-    // DragAndDrop(mainCanvasRef, drawingObjs, updateDrawing)
-
 
     useEffect(()=> {
         const canvas = mainCanvasRef.current;
@@ -28,27 +24,14 @@ const Canvas = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawingObjs.forEach(drawing => {
-            console.log(drawing.imageBitmap.width);
-            if(drawing.imageBitmap.width > canvas.width || drawing.imageBitmap.height > canvas.height) {
-                const scaleX = canvas.width / drawing.imageBitmap.width;
-                const scaleY = canvas.height / drawing.imageBitmap.height;
-                const scale = Math.min(scaleX, scaleY);
+            if(drawing.imageBitmap.height > canvas.height) {
+                const scale = canvas.height / drawing.imageBitmap.height;
 
-                if(scaleX < scaleY) {
-                    console.log('object width: ' + drawing.objectWidth + ' canvas width: ' + canvas.width);
-                    if(drawing.objectWidth !== canvas.width) {
-                        drawing.objectWidth = Math.trunc(drawing.objectWidth * scale);
-                        drawing.objectHeight = Math.trunc(drawing.objectHeight * scale);
-                        updateDrawing(drawing.id, drawing);
-                    }
-                }else {
-                    console.log('object Height: ' + drawing.objectHeight + ' canvas height: ' + canvas.height);
-                    if(drawing.objectHeight !== canvas.height) {
-                        drawing.objectWidth = Math.ceil(drawing.objectWidth * scale);
-                        drawing.objectHeight = Math.ceil(drawing.objectHeight * scale);
-                        updateDrawing(drawing.id, drawing);
-                    }                    
-                }
+                if(drawing.objectHeight !== canvas.height) {
+                    drawing.objectWidth = Math.ceil(drawing.objectWidth * scale);
+                    drawing.objectHeight = Math.ceil(drawing.objectHeight * scale);
+                    updateDrawing(drawing.id, drawing);
+                }     
 
                 ctx.save();
                 ctx.scale(scale, scale);
@@ -59,11 +42,13 @@ const Canvas = () => {
                 ctx.drawImage(drawing.imageBitmap, drawing.x, drawing.y );
             }
             if (drawing.focused) {
+                console.log('it is working');
                 drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth, drawing.objectHeight);
             }
     }   );
     },[drawingObjs]);
 
+    console.log(drawingObjs);
 
     const getCanvasPosition = () => {
         const canvas = mainCanvasRef.current;
