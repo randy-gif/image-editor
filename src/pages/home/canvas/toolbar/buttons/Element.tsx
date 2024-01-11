@@ -29,8 +29,10 @@ const Element = () => {
             const fileReader = new FileReader();
             fileReader.onloadend = () => {
                 const img = new CanvasImg(625, 200, 100, 60, fileReader.result as string);
-                img.drawOnCanvas();
-                addDrawing(img);
+                img.createBitmap()
+                .then(() => {
+                    addDrawing(img);
+                })
             };
             fileReader.readAsDataURL(file);
         }

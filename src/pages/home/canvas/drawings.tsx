@@ -10,18 +10,19 @@ export function drawRectangle(context: OffscreenCanvasRenderingContext2D, x: num
     }
 };
 
-export function drawCircle(context: OffscreenCanvasRenderingContext2D, x: number, y: number, radius: number, color: string = 'black', lineWidth: number = 2): void {
+export function drawCircle(context: OffscreenCanvasRenderingContext2D, x: number, y: number, radius: number, color: string = 'black', lineWidth: number = 0): void {
     context.fillStyle = color;
     context.strokeStyle = color;
     context.lineWidth = lineWidth;
   
     context.beginPath();
     context.arc(x, y, radius, 0, 2 * Math.PI);
-    context.fill();
   
     if (lineWidth > 0) {
       context.stroke();
-    };
+    } else {
+      context.fill();
+    }
 };
 
 export function drawEllipse(context: OffscreenCanvasRenderingContext2D, x: number, y: number, radiusX: number, radiusY: number, rotation: number = 0, startAngle: number = 0, endAngle: number = 2 * Math.PI, color: string = 'black', lineWidth: number = 2): void {
@@ -82,11 +83,17 @@ export function drawText(context: OffscreenCanvasRenderingContext2D, text: strin
     context.fillText(text, x, y);
 }
 export function drawFocusOutline(ctx: OffscreenCanvasRenderingContext2D, x: number, y: number, width: number, height: number, color: string = 'blue' ) {
+  const radius = 4;
   drawRectangle(ctx, x, y, width, height, color, 2);
   drawLine(ctx, x + width / 2, y, x + width / 2, y - 20, color);
-  drawCircle(ctx, x + width / 2, y - 20, 2, 'white');
-  drawCircle(ctx, x, y, 2, 'white');
-  drawCircle(ctx, x + width, y, 2, 'white');
-  drawCircle(ctx, x, y + height, 2, 'white');
-  drawCircle(ctx, x + width, y + height, 2, 'white');
+  drawCircle(ctx, x + width / 2, y - 20, radius, 'white');
+  drawCircle(ctx, x + width / 2, y - 20, radius, color, 2);
+  drawCircle(ctx, x, y, radius, 'white');
+  drawCircle(ctx, x, y, radius, color, 2);
+  drawCircle(ctx, x + width, y, radius, 'white');
+  drawCircle(ctx, x + width, y, radius, color, 2);
+  drawCircle(ctx, x, y + height, radius, 'white');
+  drawCircle(ctx, x, y + height, radius, color, 2);
+  drawCircle(ctx, x + width, y + height, radius, 'white');
+  drawCircle(ctx, x + width, y + height, radius, color, 2);
 }

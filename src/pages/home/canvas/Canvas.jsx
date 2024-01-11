@@ -11,13 +11,12 @@ import './Canvas.css';
 const Canvas = () => {
     const { drawingObjs, addDrawing, removeDrawing, updateDrawing } = useDrawingObjArray();
     const windowDimensions = useWindowDimensions();
-
-    const canvasHeight = windowDimensions.height;
-    const canvasWidth = windowDimensions.width;
+    const canvasHeight = Math.floor(windowDimensions.height);
+    const canvasWidth = Math.floor(windowDimensions.width);
 
     const mainCanvasRef = useRef();
     const mousePosition = useMouseMove(mainCanvasRef);
-
+    
     useEffect(()=> {
         const canvas = mainCanvasRef.current;
         const ctx = canvas.getContext('2d');
@@ -37,14 +36,14 @@ const Canvas = () => {
                 ctx.scale(scale, scale);
                 ctx.drawImage(drawing.imageBitmap, drawing.x / scale, drawing.y / scale);
                 ctx.restore();
-
             }else {
+                drawing.scaleX = 1;
+                drawing.scaleY = 1;
                 ctx.drawImage(drawing.imageBitmap, drawing.x, drawing.y );
             }
             if (drawing.focused) {
                 drawFocusOutline(ctx, drawing.x, drawing.y, drawing.objectWidth * drawing.scaleX, drawing.objectHeight * drawing.scaleY);
             }
-
     }   );
     },[drawingObjs]);
 
@@ -98,7 +97,6 @@ const Canvas = () => {
             } else {
                 pass.push(false);
             }
-            console.log(pass);
             if(pass.every(pass => pass === true)) {
                 return drawing;
             }
