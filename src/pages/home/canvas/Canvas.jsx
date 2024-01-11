@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import SideBar from './toolbar/SideBar'; 
 import BottomBar from './BottomBar';
 import CanvasContext from './CanvasContext'

@@ -1,3 +1,4 @@
+import React from 'react';
 import '../Canvas.css';
 import { IoMove, IoCrop, IoCut, IoColorFilterOutline, IoImageSharp  } from "react-icons/io5";
 import { TbAdjustmentsHorizontal, TbTools, TbSpiral} from "react-icons/tb";
